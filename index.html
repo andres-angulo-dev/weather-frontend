@@ -20,7 +20,7 @@
     <meta name="twitter:description" content="Get weather forecasts for your favorite cities with city name, country symbol, dynamic local time, weather description, an image representing the weather, and minimum and maximum temperatures."> 
     <meta name="twitter:image" content="https://raw.githubusercontent.com/AFAS75/weather-frontend/refs/heads/main/images/cover.png">
     <meta name="twitter:url" content="https://weather-frontend-sage.vercel.app/">
-    <link rel="icon" href="./images/my_logo.ico" type="image/x-icon">
+    <link rel="icon" href="./images/my_logo_browser.ico" type="image/x-icon">
     <link rel='stylesheet' href='style.css' />
     <title>Your Weather - Follow The Weather Forecast For Your Favorite Cities</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -37,7 +37,7 @@
         </div>
   
         <div id="circle-userIcon">
-          <img id='userIcon' src='images/userBlackColor.png' alt='User icon featuring a simple white silhouette with black borders of a person, representing user profiles and accounts.'>
+          <canvas id='userIcon' class="canvas" width="70" height="70"></canvas>
         </div>
       </div>
     </header>
@@ -383,5 +383,16 @@
       <p>&copy; 2024 Your Weather. All rights reserved. | By Andrés Angulo</p> 
     </footer>
     <script type='module' src='script.js'></script>
+    <script type="module">
+      import { DotLottie } from "https://cdn.jsdelivr.net/npm/@lottiefiles/dotlottie-web/+esm";
+
+      new DotLottie({
+        autoplay: true,
+        loop: true,
+        canvas: document.querySelector(".canvas"),
+        src: "images/userBlackColor.json", 
+        alt:'User icon featuring a simple white silhouette with black borders of a person, representing user profiles and accounts.'
+      });
+    </script>
   </body>
 </html>
