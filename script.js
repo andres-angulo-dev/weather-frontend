@@ -297,52 +297,55 @@ async function displayDefaultCities() {
 	try { 
 		const apiData = await weatherRequests.fetchHomePageDefaultCities();
 		if (apiData.result) {
+			// first step : show cities cards
 			apiData.homepagedata.forEach((city, i) => { 
 				const cityHtml = constants.cityHtmlWithoutLocalTime(city.city.name, city, i); 
 				constants.cityList.innerHTML += cityHtml; 
 				setTimeout(() => { 
 					const newCityContainer = document.querySelector(`#city-${i}`); 
-					console.log(i, newCityContainer)
-					const buttonWeather = document.querySelectorAll('.button-weather');
 					if (newCityContainer) { 
 						newCityContainer.classList.add('show-city'); 
-                        buttonWeather.forEach((buttonWeather, index) => {
-							(function (city, index) {
-								// console.log('1', index)
-								buttonWeather.addEventListener('click', () => {
-									const dailyForecasts = city.list.filter((_, index) => index % 8 === 4).slice(0, 5);
-									updateWeatherDetails({
-										currentTemp: Math.round(city.list[0].main.temp),
-										currentDescription: city.list[0].weather[0].main,
-										cityName: city.city.name,
-										country: city.city.country,
-										weatherMain: city.list[0].weather[0].main,
-										hourly: city.list.slice(1, 4).map(hourlyData => ({
-											time: new Date(hourlyData.dt_txt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-											temp: Math.round(hourlyData.main.temp),
-											rain: hourlyData.pop * 100,
-											wind: hourlyData.wind.speed,
-											weatherMain: hourlyData.weather[0].main,
-										})),
-										daily: dailyForecasts.map(dailylyData => ({
-											time: new Date(dailylyData.dt_txt).toLocaleTimeString('en-US', { weekday: 'long' }),
-											tempMin: Math.round(dailylyData.main.temp_min),
-											tempMax: Math.round(dailylyData.main.temp_max),
-											rain: dailylyData.pop * 100,
-											wind: dailylyData.wind.speed,
-											weatherMain: dailylyData.weather[0].main,
-										})),
-										windSpeed: city.list[0].wind.speed,
-										humidity: city.list[0].main.humidity,
-										pressure: city.list[0].main.pressure,
-									});
-									popoverHandlers.handleOpenPopoverMoreDetailsClick();
-								});
-							})(city, index)
-						});
 					} 
 				}, 10);
 			});
+			
+			// second step : show more details for each city
+			setTimeout(() => {
+				const buttonWeather = document.querySelectorAll('.button-weather');
+				buttonWeather.forEach((buttonWeather, index) => {
+					const city = apiData.homepagedata[index];
+					console.log(city)
+					buttonWeather.addEventListener('click', () => {
+						const dailyForecasts = city.list.filter((_, index) => index % 8 === 4).slice(0, 5);
+						updateWeatherDetails({
+							currentTemp: Math.round(city.list[0].main.temp),
+							currentDescription: city.list[0].weather[0].main,
+							cityName: city.city.name,
+							country: city.city.country,
+							weatherMain: city.list[0].weather[0].main,
+							hourly: city.list.slice(1, 4).map(hourlyData => ({
+								time: new Date(hourlyData.dt_txt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+								temp: Math.round(hourlyData.main.temp),
+								rain: hourlyData.pop * 100,
+								wind: hourlyData.wind.speed,
+								weatherMain: hourlyData.weather[0].main,
+							})),
+							daily: dailyForecasts.map(dailylyData => ({
+								time: new Date(dailylyData.dt_txt).toLocaleTimeString('en-US', { weekday: 'long' }),
+								tempMin: Math.round(dailylyData.main.temp_min),
+								tempMax: Math.round(dailylyData.main.temp_max),
+								rain: dailylyData.pop * 100,
+								wind: dailylyData.wind.speed,
+								weatherMain: dailylyData.weather[0].main,
+							})),
+							windSpeed: city.list[0].wind.speed,
+							humidity: city.list[0].main.humidity,
+							pressure: city.list[0].main.pressure,
+						});
+						popoverHandlers.handleOpenPopoverMoreDetailsClick();
+					});
+				});
+			}, 10)
 		}
 	} catch (error) {
 		console.error('Error fetcHomePageDefaultCities: ', error);
