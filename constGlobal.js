@@ -6,15 +6,22 @@ const constants = {
     storedUsername: localStorage.getItem('User-name'),
     storedEmail: localStorage.getItem('Email'),
     //DOM
+    buttonLogo: document.getElementById('button-logo'),
     cityContainer: document.querySelectorAll('.cityContainer'),
     openPopoverButton: document.getElementById('userIcon'),
     cityNameInput: document.getElementById('cityNameInput'),
+    cityListContainer: document.getElementById('title-home-page'),
     cityList: document.querySelector('#cityList'),
+    cityListPersonalizeContainer: document.getElementById('title-personalize'),
     cityListPersonalize: document.querySelector('#cityList-personalize'),
     overlayHomePage: document.getElementById('overlay-home-page'),
     overlayHomePageLogged: document.getElementById('overlay-home-page-logged'),
     overlaySignupSingnin: document.getElementById('overlay-signup-signin'),
     popoverSignupSingnin: document.getElementById('popover-signup-signin'),
+    overlayMoreDetails: document.getElementById('overlay-more-details'),
+    containerMoreDetails: document.getElementById('more-details-container'),
+    popoverMoreDetails: document.getElementById('popover-more-details'),
+    returnMoreDetails: document.getElementById('more-details-backButton'),
     overlayLogged: document.getElementById('overlay-logged'),
     popoverLogged: document.getElementById('popover-logged'),
     initialContainer: document.getElementById('initial-container'),
@@ -65,17 +72,19 @@ const constants = {
     // Add city 
     cityHtmlWithoutLocalTime: (cityName, homepagedata, i) => {
         return ` 
+        <button class="button-weather">    
             <div class="cityContainer" id="city-${i}"> 
                 <p class="name">${cityName}</p> 
-                <p class="country">(${homepagedata.sys.country})</p>
-                <p class="description">${homepagedata.weather[0].main}</p> 
-                <img class="weatherIcon" src="images/${homepagedata.weather[0].main}.gif" alt="Weather forecast: $={${homepagedata.weather[0].main}}"/> 
+                <p class="country">(${homepagedata.city.country})</p>
+                <p class="description">${homepagedata.list[0].weather[0].main}</p> 
+                <img class="weatherIcon" src="images/${homepagedata.list[0].weather[0].main}.gif" alt="Weather forecast: ${homepagedata.list[0].weather[0].main}"/> 
                 <div class="temperature"> 
-                    <p class="tempMin">${Math.round(homepagedata.main.temp_min)}°C</p> 
+                    <p class="tempMin">${Math.round(homepagedata.list[0].main.temp_min)}°C</p> 
                     <span>-</span> 
-                    <p class="tempMax">${Math.round(homepagedata.main.temp_max)}°C</p> 
+                    <p class="tempMax">${Math.round(homepagedata.list[0].main.temp_max)}°C</p> 
                 </div> 
-            </div> 
+            </div>
+        </button> 
         `;
     },
     cityHtmlWithLocalTime: (cityName, city, currentTime) => {

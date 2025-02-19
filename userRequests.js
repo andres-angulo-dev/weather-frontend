@@ -1,5 +1,5 @@
-// const BASE_URL = 'http://localhost:3000';
-const BASE_URL = 'https://weather-backend-rust.vercel.app';
+const BASE_URL = 'http://localhost:3000';
+// const BASE_URL = 'https://weather-backend-rust.vercel.app';
 // const BASE_URL = process.env.BASE_URL;
 
 export const fetchRefreshToken = async (refreshToken) => {

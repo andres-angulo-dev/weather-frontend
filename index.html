@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Your Weather site where users can save their favorite cities. Displays city name, country symbol (2 letters), dynamic local time (for logged users), weather description (a title), an image representing the weather, minimum and maximum temperature. The dominant color is blue with various shades of blue and some touches of white.">
-    <meta name="keywords" content="Your weateher, weather forecast, save cities, local weather, local time, weather description, weather image, temperature">
+    <meta name="keywords" content="Your weather, weather forecast, save cities, local weather, local time, weather description, weather image, temperature">
     <meta name="author" content="Andrés Angulo">
     <meta property="og:title" content="Your Weather - Follow The Weather Forecast For Your Favorite Cities">
     <meta property="og:description" content="Get weather forecasts for your favorite cities with city name, country symbol, dynamic local time, weather description, an image representing the weather, and minimum and maximum temperatures.">
@@ -29,8 +29,8 @@
   <body>
     <header role="banner">
       <div id='header'>
-        <img id="logo" src='images/my_logo.png' alt="Logo featuring 'YOUR WEATHER' in blue and white uppercase letters on the left, above a blue globe on a white background with the word 'weather' subtly repeated throughout"/>
-  
+        <button id="button-logo"><img id="logo" src='images/my_logo.png' alt="Logo featuring 'YOUR WEATHER' in blue and white uppercase letters on the left, above a blue globe on a white background with the word 'weather' subtly repeated throughout"/></button>
+        
         <div class='search'>
           <input id='cityNameInput' type='text' placeholder='Add new city' />
           <button id='addCity'><img id='glass' src='images/glass.png' alt='Search icon featuring a classic magnifying glass with a transparent lens and a sleek, curved handle all in white and gray on hover, symbolizing the search function.'/></button>
@@ -42,6 +42,156 @@
       </div>
     </header>
 
+    <div id='overlay-more-details'>
+      <button id='more-details-backButton'><i class="fa-solid fa-angles-left fa-3x"></i></button>
+      <div id='more-details-container'>
+        <div id='popover-more-details'>
+          <div id='current-forecast'>
+            <div class='forecast-title-container'>
+              <div class='forecast-title'>
+                <h3>Current Weather</h3>
+                <h2 id='cityName' class='bold'>23°, Sunny</h2>
+                <h2 id='current-weather' class='bold'>23°, Sunny</h2>
+              </div>
+              <div id='forecast-content'>
+              </div>
+            </div>
+          </div>
+          <div id='hourly-forecast'>
+            <div class='forecast-container'>
+              <div class='forecast-title'>
+                <h3>Hourly Forecast</h3>
+              </div>
+              <div class="forecast-hourly-content">
+                <div class="hourly-1">
+                  <div class="'left-container">
+                    <p id='hourly-1-time' class='p'>10 AM</p>
+                    <h2 id='hourly-1-temp' class='bold'>22°C</h2>
+                    <p id='hourly-1-rain' class='p'>10% Rain</p>
+                    <p id='hourly-1-wind' class='p'>5km/h Wind</p>
+                  </div>
+                  <div class='hourly-right-container-1'>
+                    <img/>
+                  </div>
+                </div>
+                <div class="hourly-2">
+                  <div class="'left-container">
+                    <p id='hourly-2-time' class='p'>10 AM</p>
+                    <h2 id='hourly-2-temp' class='bold'>22°C</h2>
+                    <p id='hourly-2-rain' class='p'>10% Rain</p>
+                    <p id='hourly-2-wind' class='p'>5km/h Wind</p>
+                  </div>
+                  <div class='hourly-right-container-2'>
+                    <img/>
+                  </div>
+                </div>
+                <div class="hourly-3">
+                  <div class="'left-container">
+                    <p id='hourly-3-time' class='p'>10 AM</p>
+                    <h2 id='hourly-3-temp' class='bold'>22°C</h2>
+                    <p id='hourly-3-rain' class='p'>10% Rain</p>
+                    <p id='hourly-3-wind' class='p'>5km/h Wind</p>
+                  </div>
+                  <div class='hourly-right-container-3'>
+                    <img/>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          <div id='daily-forecast'>
+            <div class='forecast-container'>
+              <div class='forecast-title'>
+                <h3>Daily Forecast</h3>
+              </div>
+              <div class="forecast-daily-content">
+                <div class="daily-1">
+                  <div class='left-container'>
+                    <p id='daily-1-time' class='p'>10 AM</p>
+                    <h2 id='daily-1-temp' class='bold'>22°C</h2>
+                    <p id='daily-1-rain' class='p'>10% Rain</p>
+                    <p id='daily-1-wind' class='p'>5km/h Wind</p>
+                  </div>
+                  <div id='daily-right-container-1'>
+                    <img id='daily-1-icon'/>
+                  </div>
+                </div>
+                <div class="daily-2">
+                  <div class='left-container'>
+                    <p id='daily-2-time' class='p'>10 AM</p>
+                    <h2 id='daily-2-temp' class='bold'>22°C</h2>
+                    <p id='daily-2-rain' class='p'>10% Rain</p>
+                    <p id='daily-2-wind' class='p'>5km/h Wind</p>
+                  </div>
+                  <div id='daily-right-container-2'>
+                    <img id='daily-2-icon'/>
+                  </div>
+                </div>
+                <div class="daily-3">
+                  <div class='left-container'>
+                    <p id='daily-3-time' class='p'>10 AM</p>
+                    <h2 id='daily-3-temp' class='bold'>22°C</h2>
+                    <p id='daily-3-rain' class='p'>10% Rain</p>
+                    <p id='daily-3-wind' class='p'>5km/h Wind</p>
+                  </div>
+                  <div id='daily-right-container-3'>
+                    <img id='daily-3-icon'/>
+                  </div>
+                </div>
+                <div class="daily-4">
+                  <div class='left-container'>
+                    <p id='daily-4-time' class='p'>10 AM</p>
+                    <h2 id='daily-4-temp' class='bold'>22°C</h2>
+                    <p id='daily-4-rain' class='p'>10% Rain</p>
+                    <p id='daily-4-wind' class='p'>5km/h Wind</p>
+                  </div>
+                  <div id='daily-right-container-4'>
+                    <img id='daily-4-icon'/>
+                  </div>
+                </div>
+                <div class="daily-5">
+                  <div class='left-container'>
+                    <p id='daily-5-time' class='p'>10 AM</p>
+                    <h2 id='daily-5-temp' class='bold'>22°C</h2>
+                    <p id='daily-5-rain' class='p'>10% Rain</p>
+                    <p id='daily-5-wind' class='p'>5km/h Wind</p>
+                  </div>
+                  <div id='daily-right-container-5'>
+                    <img id='daily-5-icon'/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id='wind-speed-forecast'>
+            <div class='forecast-container'>
+              <div class='forecast-title'>
+                <h3>Wind Speed</h3>
+                <h2 id='wind-speed' class='bold'>16 km/h</h2>
+              </div>
+            </div>
+          </div>
+          <div id='humidity-forecast'>
+            <div class='forecast-container'>
+              <div class='forecast-title'>
+                <h3>Humidity</h3>
+                <h2 id='humidity' class='bold'>78%</h2>
+              </div>
+            </div>
+          </div>
+          <div id='pressure-forecast'>
+            <div class='forecast-container'>
+              <div class='forecast-title'>
+                <h3>Pressure</h3>
+                <h2 id='pressure' class='bold'>1029 hPa</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <main role="main">
       <div id='list-containter'>
         <div id='title-personalize'>
@@ -49,7 +199,8 @@
             <p>My cities</p>
             <p id='text-title-personalize-bar'><i>(log in to save your favorite cities)</i></p>
           </div>
-          <div id='cityList-personalize'></div>
+          <div id='cityList-personalize'>
+          </div>
         </div>
         <div id='title-home-page'>
           <p id='title-home-page-bar'>Default cities</p>
@@ -175,7 +326,7 @@
           </div>
         </div>
       </div>
-  
+
       <div id='overlay-signup-signin'>
         <div id='popover-signup-signin'>
           <div id='initial-container'>

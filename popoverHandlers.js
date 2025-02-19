@@ -15,9 +15,59 @@ export const handleOverlaySignupSigninClick = (event) => {
     }
 };
 
+// Handle click events on the overlay for more details popover
+export const handleOverlayMoreDetailsClick = (event) => {
+    if (event.target === constants.overlayMoreDetails) {
+        constants.overlayMoreDetails.style.display = 'none';
+        constants.containerMoreDetails.classList.remove('show');
+        constants.returnMoreDetails.classList.remove('show');
+    }
+};
+
+
+// Handle click events on the open container more details popover
+let previousScrollPosition = 0;
+
+export const handleOpenPopoverMoreDetailsClick = () => {
+    previousScrollPosition = window.scrollY;
+    constants.overlayMoreDetails.style.display = 'flex';
+    setTimeout(() => {
+        constants. containerMoreDetails.classList.add('show');
+        constants.returnMoreDetails.classList.add('show');
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        })
+    }, 10)
+};
+
+// Handle click events on the return more details button
+export const handleReturnMoreDetailsClick = () => {
+    constants.overlayMoreDetails.style.display = 'none';
+    constants.containerMoreDetails.classList.remove('show');
+    constants.returnMoreDetails.classList.remove('show');
+    window.scrollTo({
+        top: previousScrollPosition,
+        behavior: 'smooth',
+    })
+};
+
+
+// logic to copy style from title-home-page-bar to title-personalize-bar
+export const copyStyleFromTitleHomePage = () => {
+    let homeBar = document.getElementById('title-home-page-bar');
+    let personalizeBar = document.getElementById('title-personalize-bar');
+    let homeBarStyles = window.getComputedStyle(homeBar);
+
+    for (let i = 0; i < homeBarStyles.length; i++) {
+        let propertyName = homeBarStyles[i];
+        let propertyValue = homeBarStyles.getPropertyValue(propertyName);
+        personalizeBar.style.setProperty(propertyName, propertyValue);
+    }
+}
+
 // Handle click events on the signup button
 export const handleSignupButtonClick = () => {
-    constants.initialContainer.classList.add('hidden');
     constants.initialContainer.style.display = 'none';
     constants.signup.classList.remove('hidden');
     constants.popoverSignupSingnin.style.width = '';
@@ -25,7 +75,6 @@ export const handleSignupButtonClick = () => {
 
 // Handle click events on the signin button
 export const handleSigninButtonClick = () => {
-    constants.initialContainer.classList.add('hidden');
     constants.initialContainer.style.display = 'none';
     constants.signin.classList.remove('hidden');
     constants.popoverSignupSingnin.style.width = '';
