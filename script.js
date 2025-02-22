@@ -60,14 +60,15 @@ const refreshPage = () => {
 	window.location.reload();
 }
 
-// Event for mouse clicks
+// Event for clicking on the logo
 constants.buttonLogo.addEventListener('click', refreshPage);
 
-// Event for touch devices
+// Event for touch on the logo
 // constants.buttonLogo.addEventListener('touchstart', refreshPage);
 
 
 // Handle add city
+let array = []; //added 
 const addCity = async (cityName) => {
 	if (constants.accessToken) {
 		try {
@@ -89,10 +90,11 @@ const addCity = async (cityName) => {
 				}
 			})
 			if (!cityAlreadyExists) {
+				// First step : show cities cards
 				const apiData = await weatherRequests.fetchAddCityHomePage(cityName);
 				if (apiData.result) {
-					const lat = apiData.city.coord.lat;
-					const lon = apiData.city.coord.lon;
+					const lat = apiData.city.city.coord.lat;
+					const lon = apiData.city.city.coord.lon;
 					const apiTimeData = await weatherRequests.fetchLocalTime(lat, lon);
 					if (apiTimeData) {
 						let currentTime = new Date(apiTimeData.localTime.formatted);
@@ -111,10 +113,49 @@ const addCity = async (cityName) => {
 						titlePersonalizeElement.style.position = 'static';
 						document.querySelector(`#city-${apiData.cityName}`).classList.add('show-city');
 						constants.cityNameInput.value = '';
+						let data = apiData.city;
+						array.push(data);
 					}
 				} else {
 					showError()
 				}
+
+				// Second step : show more details for each city
+				setTimeout(() => {
+					const buttonWeather = document.querySelectorAll(`.button-weather`);
+					buttonWeather.forEach((buttonWeather, index) => {
+						const city = array[index];
+						buttonWeather.addEventListener('click', () => {
+							const dailyForecasts = city.list.filter((e) => e.dt_txt.includes('12:00:00'));
+							updateWeatherDetails({
+								currentTemp: Math.round(city.list[0].main.temp),
+								currentDescription: city.list[0].weather[0].main,
+								cityName: city.city.name,
+								country: city.city.country,
+								weatherMain: city.list[0].weather[0].main,
+								hourly: city.list.slice(1, 4).map(hourlyData => ({
+									time: new Date(hourlyData.dt_txt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+									temp: Math.round(hourlyData.main.temp),
+									rain: hourlyData.pop * 100,
+									wind: hourlyData.wind.speed,
+									weatherMain: hourlyData.weather[0].main,
+								})),
+								daily: dailyForecasts.map(dailylyData => ({
+									time: new Date(dailylyData.dt_txt).toLocaleTimeString('en-US', { weekday: 'long' }),
+									tempMin: Math.round(dailylyData.main.temp_min),
+									tempMax: Math.round(dailylyData.main.temp_max),
+									rain: dailylyData.pop * 100,
+									wind: dailylyData.wind.speed,
+									weatherMain: dailylyData.weather[0].main,
+								})),
+								windSpeed: city.list[0].wind.speed,
+								humidity: city.list[0].main.humidity,
+								pressure: city.list[0].main.pressure,
+							});
+							popoverHandlers.handleOpenPopoverMoreDetailsClick();
+						});
+					});
+				}, 10)
 			} else {
 				showError();
 			}
@@ -147,6 +188,7 @@ document.getElementById('cityNameInput').addEventListener('keydown', (event) => 
 // Show user's added cities
 async function displayMyCities() {
 	try {
+		// First step : show cities cards
 		const apiData = await weatherRequests.fetchMyCitiesAdded();
 		if (apiData.myCities) {
 			for (let i = 0; i < apiData.myCities.length; i++) {
@@ -156,7 +198,7 @@ async function displayMyCities() {
 					setTimeout(() => {
 						document.querySelector(`#city-${i}`).classList.add( 'show-city');
 					}, 10);
-					await fetchAndUpdateTime(apiData.myCities[i].coord.lat, apiData.myCities[i].coord.lon, i);
+					await fetchAndUpdateTime(apiData.myCities[i].city.coord.lat, apiData.myCities[i].city.coord.lon, i);
 					await pause(1000);
 				} else {
 					console.error(`City data for index ${i} is undifined`);
@@ -175,7 +217,44 @@ async function displayMyCities() {
 				}, 5000);
 			} 
 			updateDeleteCityEventListener(); 
-			updateMessageVisibility(); 
+			updateMessageVisibility();
+			
+		// Second step : show more details for each city
+		setTimeout(() => {
+			const buttonWeather = document.querySelectorAll('.button-weather');
+			buttonWeather.forEach((buttonWeather, index) => {
+				const city = apiData.myCities[index];
+				buttonWeather.addEventListener('click', () => {
+					const dailyForecasts = city.list.filter((e) => e.dt_txt.includes('12:00:00'));
+					updateWeatherDetails({
+						currentTemp: Math.round(city.list[0].main.temp),
+						currentDescription: city.list[0].weather[0].main,
+						cityName: city.city.name,
+						country: city.city.country,
+						weatherMain: city.list[0].weather[0].main,
+						hourly: city.list.slice(1, 4).map(hourlyData => ({
+							time: new Date(hourlyData.dt_txt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+							temp: Math.round(hourlyData.main.temp),
+							rain: hourlyData.pop * 100,
+							wind: hourlyData.wind.speed,
+							weatherMain: hourlyData.weather[0].main,
+						})),
+						daily: dailyForecasts.map(dailylyData => ({
+							time: new Date(dailylyData.dt_txt).toLocaleTimeString('en-US', { weekday: 'long' }),
+							tempMin: Math.round(dailylyData.main.temp_min),
+							tempMax: Math.round(dailylyData.main.temp_max),
+							rain: dailylyData.pop * 100,
+							wind: dailylyData.wind.speed,
+							weatherMain: dailylyData.weather[0].main,
+						})),
+						windSpeed: city.list[0].wind.speed,
+						humidity: city.list[0].main.humidity,
+						pressure: city.list[0].main.pressure,
+					});
+					popoverHandlers.handleOpenPopoverMoreDetailsClick();
+				});
+			});
+		}, 10)
 		} else {
 			console.error('No cities found in API');
 		}
@@ -297,7 +376,8 @@ async function displayDefaultCities() {
 	try { 
 		const apiData = await weatherRequests.fetchHomePageDefaultCities();
 		if (apiData.result) {
-			// first step : show cities cards
+			// First step : show cities cards
+			// console.log('FORECAST : ', apiData.homepagedata[0].list)
 			apiData.homepagedata.forEach((city, i) => { 
 				const cityHtml = constants.cityHtmlWithoutLocalTime(city.city.name, city, i); 
 				constants.cityList.innerHTML += cityHtml; 
@@ -309,14 +389,13 @@ async function displayDefaultCities() {
 				}, 10);
 			});
 			
-			// second step : show more details for each city
+			// Second step : show more details for each city
 			setTimeout(() => {
 				const buttonWeather = document.querySelectorAll('.button-weather');
 				buttonWeather.forEach((buttonWeather, index) => {
 					const city = apiData.homepagedata[index];
-					console.log(city)
 					buttonWeather.addEventListener('click', () => {
-						const dailyForecasts = city.list.filter((_, index) => index % 8 === 4).slice(0, 5);
+						const dailyForecasts = city.list.filter((e) => e.dt_txt.includes('12:00:00'));
 						updateWeatherDetails({
 							currentTemp: Math.round(city.list[0].main.temp),
 							currentDescription: city.list[0].weather[0].main,

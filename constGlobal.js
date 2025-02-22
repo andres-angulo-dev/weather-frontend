@@ -89,35 +89,39 @@ const constants = {
     },
     cityHtmlWithLocalTime: (cityName, city, currentTime) => {
         return `
+        <button class="button-weather"> 
 	    	<div class="cityContainer" id="city-${cityName}">
 	    		<p class="name">${cityName}</p>
-	    		<p class="country">(${city.sys.country})</p>				
+	    		<p class="country">(${city.city.country})</p>				
 	    		<p class="currentTime" id="time-${cityName}">${currentTime.toLocaleTimeString()}</p>
-	    		<p class="description">${city.weather[0].main}</p>
-	    		<img class="weatherIcon" src="images/${city.weather[0].main}.gif" alt="Weather forecast: ${city.weather[0].main}"/>
+	    		<p class="description">${city.list[0].weather[0].main}</p>
+	    		<img class="weatherIcon" src="images/${city.list[0].weather[0].main}.gif" alt="Weather forecast: ${city.list[0].weather[0].main}"/>
 	    		<div class="temperature">
-	    			<p class="tempMin">${Math.round(city.main.temp_min)}°C</p>
+	    			<p class="tempMin">${Math.round(city.list[0].main.temp_min)}°C</p>
 	    			<span>-</span>
-	    			<p class="tempMax">${Math.round(city.main.temp_max)}°C</p>
+	    			<p class="tempMax">${Math.round(city.list[0].main.temp_max)}°C</p>
 	    		</div>
 	    	</div>
+        </button> 
 	    `;
     },
     cityHtmlWithLocalTimeAndDeleteButton: (cityName, city, i) => {
-        return ` 
+        return `
+        <div class="button-weather"> 
 			<div class="cityContainer" id="city-${i}"> 
 				<p class="name">${cityName}</p> 
-				<p class="country">(${city.sys.country})</p> 
+				<p class="country">(${city.city.country})</p> 
 				<p class="currentTime" id="time-${i}">Loading...</p> <!-- Placeholder for time --> 
-				<p class="description">${city.weather[0].main}</p> 
-				<img class="weatherIcon" src="images/${city.weather[0].main}.gif" alt="Weather forecast: ${city.weather[0].main}"/> 
+				<p class="description">${city.list[0].weather[0].main}</p> 
+				<img class="weatherIcon" src="images/${city.list[0].weather[0].main}.gif" alt="Weather forecast: ${city.list[0].weather[0].main}"/> 
 				<div class="temperature"> 
-					<p class="tempMin">${Math.round(city.main.temp_min)}°C</p> 
+					<p class="tempMin">${Math.round(city.list[0].main.temp_min)}°C</p> 
 					<span>-</span> 
-					<p class="tempMax">${Math.round(city.main.temp_max)}°C</p> 
+					<p class="tempMax">${Math.round(city.list[0].main.temp_max)}°C</p> 
 				</div> 
 				<button class="deleteCity" id="${cityName}">Delete</button> 
-			</div>
+            </div>
+        </div> 
 		 `;
     },
     // Messages
