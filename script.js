@@ -230,7 +230,8 @@ function updateMessageVisibility() {
 async function updateDeleteCityEventListener() {
 	const deleteButtons = document.querySelectorAll('.deleteCity'); 
 	deleteButtons.forEach((button, i) => { 
-		button.addEventListener('click', async function() { 
+		button.addEventListener('click', async function(event) {
+			event.stopPropagation();
 			try {
 				const apiData = await weatherRequests.fetchDeleteCity(this.id);
 				if (apiData.result) { 
