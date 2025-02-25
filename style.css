@@ -967,6 +967,9 @@ footer p {
     footer p { 
         font-size: 12px; 
     } 
+    #button-change-password {
+        line-height: 15px;
+    }
 }
 
 @media (max-width: 608px) {
