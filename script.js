@@ -2,6 +2,7 @@ import constants from './constGlobal.js';
 import userRequests from './userRequests.js';
 import weatherRequests from './weatherRequests.js';
 import * as popoverHandlers from './popoverHandlers.js';
+import displayPopoverMoreDetails from './popoverMoreDetailsHandler.js';
 
 // Refresh token
 const newAccessToken =  async () => {
@@ -119,43 +120,7 @@ const addCity = async (cityName) => {
 				} else {
 					showError()
 				}
-
-				// Second step : show more details for each city
-				setTimeout(() => {
-					const buttonWeather = document.querySelectorAll(`.button-weather`);
-					buttonWeather.forEach((buttonWeather, index) => {
-						const city = array[index];
-						buttonWeather.addEventListener('click', () => {
-							const dailyForecasts = city.list.filter((e) => e.dt_txt.includes('12:00:00'));
-							updateWeatherDetails({
-								currentTemp: Math.round(city.list[0].main.temp),
-								currentDescription: city.list[0].weather[0].main,
-								cityName: city.city.name,
-								country: city.city.country,
-								weatherMain: city.list[0].weather[0].main,
-								hourly: city.list.slice(1, 4).map(hourlyData => ({
-									time: new Date(hourlyData.dt_txt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-									temp: Math.round(hourlyData.main.temp),
-									rain: hourlyData.pop * 100,
-									wind: hourlyData.wind.speed,
-									weatherMain: hourlyData.weather[0].main,
-								})),
-								daily: dailyForecasts.map(dailylyData => ({
-									time: new Date(dailylyData.dt_txt).toLocaleTimeString('en-US', { weekday: 'long' }),
-									tempMin: Math.round(dailylyData.main.temp_min),
-									tempMax: Math.round(dailylyData.main.temp_max),
-									rain: dailylyData.pop * 100,
-									wind: dailylyData.wind.speed,
-									weatherMain: dailylyData.weather[0].main,
-								})),
-								windSpeed: city.list[0].wind.speed,
-								humidity: city.list[0].main.humidity,
-								pressure: city.list[0].main.pressure,
-							});
-							popoverHandlers.handleOpenPopoverMoreDetailsClick();
-						});
-					});
-				}, 10)
+				displayPopoverMoreDetails(array);
 			} else {
 				showError();
 			}
@@ -218,43 +183,7 @@ async function displayMyCities() {
 			} 
 			updateDeleteCityEventListener(); 
 			updateMessageVisibility();
-			
-		// Second step : show more details for each city
-		setTimeout(() => {
-			const buttonWeather = document.querySelectorAll('.button-weather');
-			buttonWeather.forEach((buttonWeather, index) => {
-				const city = apiData.myCities[index];
-				buttonWeather.addEventListener('click', () => {
-					const dailyForecasts = city.list.filter((e) => e.dt_txt.includes('12:00:00'));
-					updateWeatherDetails({
-						currentTemp: Math.round(city.list[0].main.temp),
-						currentDescription: city.list[0].weather[0].main,
-						cityName: city.city.name,
-						country: city.city.country,
-						weatherMain: city.list[0].weather[0].main,
-						hourly: city.list.slice(1, 4).map(hourlyData => ({
-							time: new Date(hourlyData.dt_txt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-							temp: Math.round(hourlyData.main.temp),
-							rain: hourlyData.pop * 100,
-							wind: hourlyData.wind.speed,
-							weatherMain: hourlyData.weather[0].main,
-						})),
-						daily: dailyForecasts.map(dailylyData => ({
-							time: new Date(dailylyData.dt_txt).toLocaleTimeString('en-US', { weekday: 'long' }),
-							tempMin: Math.round(dailylyData.main.temp_min),
-							tempMax: Math.round(dailylyData.main.temp_max),
-							rain: dailylyData.pop * 100,
-							wind: dailylyData.wind.speed,
-							weatherMain: dailylyData.weather[0].main,
-						})),
-						windSpeed: city.list[0].wind.speed,
-						humidity: city.list[0].main.humidity,
-						pressure: city.list[0].main.pressure,
-					});
-					popoverHandlers.handleOpenPopoverMoreDetailsClick();
-				});
-			});
-		}, 10)
+			displayPopoverMoreDetails(apiData.myCities);
 		} else {
 			console.error('No cities found in API');
 		}
@@ -318,59 +247,6 @@ async function updateDeleteCityEventListener() {
 	});
 };
 
-// More details forecast
-const updateWeatherDetails = (weatherData) => {
-	document.getElementById('current-weather').textContent = `
-	${weatherData.currentTemp}°,
-	${weatherData.currentDescription}`;
-	document.getElementById('cityName').textContent= `
-	${weatherData.cityName}
-	(${weatherData.country})`;
-	document.getElementById('forecast-content').innerHTML = `<img class="weatherIcon-forecast" src="images/${weatherData.weatherMain}.gif" alt="Weather forecast: ${weatherData.weatherMain}"/>`;	
-	
-	weatherData.hourly.forEach((hour, index) => {
-		if (index < 3 ) {
-			document.getElementById(`hourly-${index + 1}-time`).textContent = hour.time;
-			document.getElementById(`hourly-${index + 1}-temp`).textContent = `${hour.temp}°C`;
-			document.getElementById(`hourly-${index + 1}-rain`).textContent = `${hour.rain.toFixed(2)}% Rain`;
-			document.getElementById(`hourly-${index + 1}-wind`).textContent = `${hour.wind.toFixed(2)}km/h Wind`;
-			
-			const hourlyIconContainer = document.querySelector(`.hourly-right-container-${index + 1}`);
-			if (hourlyIconContainer) {
-				hourlyIconContainer.innerHTML = `<img id="hourly-${index + 1}-icon" src="images/${hour.weatherMain}.gif" alt="Weather forecast: ${hour.weatherMain}"/>`;
-			}
-		}
-	});
-	
-	weatherData.daily.forEach((day, index) => {
-		if (index < 5 ) {
-			document.getElementById(`daily-${index + 1}-time`).textContent = day.time.split(' ')[0],
-			document.getElementById(`daily-${index + 1}-temp`).textContent = `${day.tempMin}°C / ${day.tempMax}°C`;
-			document.getElementById(`daily-${index + 1}-rain`).textContent = `${day.rain.toFixed(2)}% Rain`;
-			document.getElementById(`daily-${index + 1}-wind`).textContent = `${day.wind.toFixed(2)}km/h Wind`;
-
-			const dailyIconContainer = document.getElementById(`daily-${index + 1}-icon`);
-			if (dailyIconContainer) {
-				// Methode OUTERHTML
-				dailyIconContainer.outerHTML = `<img id="daily-${index + 1}-icon" src="images/${day.weatherMain}.gif" alt="Weather forecast: ${day.weatherMain}"/>`;
-				// // Methode SRC/ALT
-				// dailyIconContainer.src = `images/${day.weatherMain}.gif`;
-				// dailyIconContainer.alt = `Weather forecast: ${day.weatherMain}`;
-			}
-
-			// // Methode with INNERHTML
-			// const dailyIconContainer = document.getElementById(`right-container-${index + 1}`);
-			// if (dailyIconContainer) {
-			// 	dailyIconContainer.innerHTML = `<img id="daily-${index + 1}-icon" src="images/${day.weatherMain}.gif" alt="Weather forecast: ${day.weatherMain}"/>`;
-			// }
-		}
-	});
-
-	document.getElementById('wind-speed').textContent = `${weatherData.windSpeed} km/h`;
-	document.getElementById('humidity').textContent = `${weatherData.humidity}%`;
-	document.getElementById('pressure').textContent = `${weatherData.pressure} hPa`;
-};
-
 //Show default cities on the home page
 async function displayDefaultCities() {
 	try { 
@@ -388,43 +264,7 @@ async function displayDefaultCities() {
 					} 
 				}, 10);
 			});
-			
-			// Second step : show more details for each city
-			setTimeout(() => {
-				const buttonWeather = document.querySelectorAll('.button-weather');
-				buttonWeather.forEach((buttonWeather, index) => {
-					const city = apiData.homepagedata[index];
-					buttonWeather.addEventListener('click', () => {
-						const dailyForecasts = city.list.filter((e) => e.dt_txt.includes('12:00:00'));
-						updateWeatherDetails({
-							currentTemp: Math.round(city.list[0].main.temp),
-							currentDescription: city.list[0].weather[0].main,
-							cityName: city.city.name,
-							country: city.city.country,
-							weatherMain: city.list[0].weather[0].main,
-							hourly: city.list.slice(1, 4).map(hourlyData => ({
-								time: new Date(hourlyData.dt_txt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-								temp: Math.round(hourlyData.main.temp),
-								rain: hourlyData.pop * 100,
-								wind: hourlyData.wind.speed,
-								weatherMain: hourlyData.weather[0].main,
-							})),
-							daily: dailyForecasts.map(dailylyData => ({
-								time: new Date(dailylyData.dt_txt).toLocaleTimeString('en-US', { weekday: 'long' }),
-								tempMin: Math.round(dailylyData.main.temp_min),
-								tempMax: Math.round(dailylyData.main.temp_max),
-								rain: dailylyData.pop * 100,
-								wind: dailylyData.wind.speed,
-								weatherMain: dailylyData.weather[0].main,
-							})),
-							windSpeed: city.list[0].wind.speed,
-							humidity: city.list[0].main.humidity,
-							pressure: city.list[0].main.pressure,
-						});
-						popoverHandlers.handleOpenPopoverMoreDetailsClick();
-					});
-				});
-			}, 10)
+			displayPopoverMoreDetails(apiData.homepagedata);
 		}
 	} catch (error) {
 		console.error('Error fetcHomePageDefaultCities: ', error);
@@ -444,11 +284,9 @@ async function showWeatherForecast() {
 	};
 };
 
-
 // Handle the “more details” popover
 constants.overlayMoreDetails.addEventListener('click', popoverHandlers.handleOverlayMoreDetailsClick);
 constants.returnMoreDetails.addEventListener('click', popoverHandlers.handleReturnMoreDetailsClick);
-
 
 // Handle the “signup/signin” popover 
 constants.overlaySignupSingnin.addEventListener('click', popoverHandlers.handleOverlaySignupSigninClick); 

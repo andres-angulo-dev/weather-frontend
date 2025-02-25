@@ -66,5 +66,6 @@ export default {
 	fetchSignUpUser,
 	fetchSigninUser,
 	fetchChangePassword,
+	fetchForgotPassword,
 	fetchDeleteUserAccount
 };
